@@ -27,7 +27,6 @@ router.beforeEach((to, from, next) => {
       if (store.getters.menus === undefined) { // 判断当前用户是否已拉取完user_info信息
         store.dispatch('GetUserInfo').then(res => { // 拉取user_info
           const menuList = res.data.menus
-          console.log(menuList)
           // const roles = res.data.roles // note: roles must be a array! such as: ['editor','develop']
           store.dispatch('GenerateRoutes', { menuList }).then(() => { // 根据roles权限生成可访问的路由表
             router.addRoutes(store.getters.addRouters) // 动态添加可访问路由表

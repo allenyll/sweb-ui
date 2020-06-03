@@ -72,7 +72,8 @@
             :max-count="maxCount"
             :upload-id="form.pkCategoryId"
             upload-type="SW1802"
-            style="display: inline-block;margin-left: 10px"/>
+            style="display: inline-block;margin-left: 10px"
+            @removeFile="removeFile"/>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -267,14 +268,7 @@ export default {
         .then(response => {
           this.treeData = response.data.list
           this.listLoading = false
-          console.log(this.treeData)
         })
-    },
-    getParentList() {
-      list().then(response => {
-        this.nameMap = response.data.map
-        this.parentOptions = response.data.list
-      })
     },
     getCategoryTree() {
       categoryTree().then(response => {
@@ -315,6 +309,9 @@ export default {
       })
       this.dialogCategoryVisible = false
     },
+    removeFile(fileList) {
+      this.fileList = fileList
+    },
     handleFilter() {
       this.getList()
     },
@@ -336,8 +333,7 @@ export default {
         .then(response => {
           const fileUrl = response.data.file.fileUrl
           this.fileUrl = fileUrl
-          console.log(fileUrl)
-          if (fileUrl !== undefined && fileUrl !== '') {
+          if (fileUrl !== undefined && fileUrl !== '' && fileUrl !== null) {
             var data = {
               name: '分类',
               url: response.data.file.fileUrl
@@ -412,6 +408,7 @@ export default {
       set[formName].validate(valid => {
         if (valid) {
           this.dialogFormVisible = false
+          console.log(this.fileList)
           this.form.fileList = this.fileList
           putObj(this.form.pkCategoryId, this.form).then(() => {
             this.dialogFormVisible = false

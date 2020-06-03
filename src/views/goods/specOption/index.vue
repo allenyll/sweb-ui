@@ -104,7 +104,8 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        name: undefined
+        name: undefined,
+        order_code: true
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -136,6 +137,11 @@ export default {
   methods: {
     getList() {
       this.listLoading = true
+      var _id = this.$route.query.id
+      // eslint-disable-next-line eqeqeq
+      if (_id != '' && _id != null) {
+        this.listQuery.eq_fk_specs_id = _id
+      }
       page(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total

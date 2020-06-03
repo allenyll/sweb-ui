@@ -41,6 +41,14 @@
           <span>{{ scope.row.status | isOrNoFilter }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="设置" width="200" align="center">
+        <template slot-scope="scope">
+          <el-button
+            size="mini"
+            @click="getSpecsOptions(scope.row)">规格选项
+          </el-button>
+        </template>
+      </el-table-column>
       <el-table-column fixed="right" align="center" label="操作" width="150px">
         <template slot-scope="scope">
           <el-button v-if="specsManager_btn_edit" size="small" type="success" @click="handleUpdate(scope.row)">编辑
@@ -325,6 +333,9 @@ export default {
     },
     closeDialog() {
       this.form.fkCategoryId = null
+    },
+    getSpecsOptions(row) {
+      this.$router.push({ path: '/goods/specOption', query: { id: row.pkSpecsId }})
     },
     getCategoryList() {
       getCategoryList().then(response => {

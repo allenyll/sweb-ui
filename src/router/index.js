@@ -298,8 +298,7 @@ export const asyncRouterMap = [
     icon: 'setting',
     children: [
       {
-        path: 'coupon'
-        ,
+        path: 'coupon',
         component: () => import('@/views/order/order/index'),
         name: '订单列表',
         meta: { title: '订单列表', icon: 'sw-order', noCache: true, perms: 'order:order:list' }

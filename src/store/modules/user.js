@@ -59,7 +59,6 @@ const user = {
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
           const data = response.data
-          console.log(data)
           var token = 'Bearer ' + data.token
           const tokens = token
           commit('SET_TOKEN', tokens)
@@ -81,7 +80,6 @@ const user = {
           const data = response.data
 
           if (data.menus && data.menus.length > 0) { // 验证返回的roles是否是一个非空数组
-            console.log(data.menus)
             commit('SET_MENUS', data.menus)
             const elements = {}
             for (let i = 0; i < data.menus.length; i++) {

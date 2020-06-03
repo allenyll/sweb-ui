@@ -79,7 +79,7 @@ export default {
       const config = {
         header: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': token + ',JWT_PLATFORM'
+          'Authorization': token
         },
         onUploadProgress: progressEvent => {
           const percent = (progressEvent.loaded / progressEvent.total * 100) | 0
@@ -92,7 +92,7 @@ export default {
       formData.append('type', this.uploadType)
       formData.append('id', this.uploadId)
 
-      axios.post('http://localhost:8080/system-web/cosFile/upload', formData, config).then((res) => {
+      axios.post('http://localhost:10001/api-file/file/upload', formData, config).then((res) => {
         // 做处理
         // this.getFileList(this.goodsId)
         if (res.data.code === '100000') {

@@ -56,6 +56,7 @@ export default {
       // for (let i = 0; i < this.value.length; i++) {
       //   fileList.push({ url: this.value[i] })
       // }
+      console.log(this.value)
       return this.value
     }
   },
@@ -67,7 +68,7 @@ export default {
       const config = {
         header: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': token + ',JWT_PLATFORM'
+          'Authorization': token
         },
         onUploadProgress: progressEvent => {
           const percent = (progressEvent.loaded / progressEvent.total * 100) | 0
@@ -80,7 +81,7 @@ export default {
       formData.append('type', this.uploadType)
       formData.append('id', this.uploadId)
 
-      axios.post('http://localhost:8080/system-web/cosFile/upload', formData, config).then((res) => {
+      axios.post('http://localhost:10001/api-file/file/upload', formData, config).then((res) => {
         // 做处理
         // this.getFileList(this.goodsId)
         if (res.data.code === '100000') {
@@ -108,6 +109,9 @@ export default {
     },
     // 删除文件之前的钩子函数
     handleRemove(file, fileList) {
+      console.log(file)
+      console.log(fileList)
+      this.$emit('removeFile', fileList)
       this.$message({
         type: 'info',
         message: '已删除原有图片',
