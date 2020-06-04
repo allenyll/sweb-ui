@@ -126,7 +126,8 @@
           v-model="selectSkuPics"
           :upload-id="value.pkGoodsId"
           upload-type="SW1801"
-          style="display: inline-block;margin-left: 10px"/>
+          style="display: inline-block;margin-left: 10px"
+          @removeFile="removeFile"/>
       </el-form-item>
       <el-form-item label="规格参数：">
         <tinymce :width="595" :height="300" v-model="value.goodsDesc"/>
@@ -253,6 +254,11 @@ export default {
       getFileList(param).then(response => {
         this.selectSkuPics = response.data.list
       })
+    },
+    removeFile(fileList) {
+      this.selectSkuPics = fileList
+      this.value.selectSkuPics = fileList
+      console.log(this.value.selectSkuPics)
     },
     categoryTreeList() {
       categoryTree().then(res => {

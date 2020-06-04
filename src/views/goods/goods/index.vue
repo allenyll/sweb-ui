@@ -280,8 +280,6 @@ import { getCategoryList } from '@/api/goods/category/index'
 import { getList } from '@/api/admin/dict/index'
 import { mapGetters } from 'vuex'
 import Tinymce from '@/components/Tinymce'
-import { getToken } from '@/utils/auth'
-import axios from 'axios'
 const defaultListQuery = {
   page: 1,
   limit: 10,
@@ -544,35 +542,6 @@ export default {
       this.fileList = []
       this.form.goodsDesc = ''
       this.activeName = 'first'
-    },
-    myUpload(content) {
-      const token = getToken()
-      const self = this
-      const config = {
-        header: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': token + ',JWT_PLATFORM'
-        },
-        onUploadProgress: progressEvent => {
-          const percent = (progressEvent.loaded / progressEvent.total * 100) | 0
-          // 调用onProgress方法来显示进度条，需要传递个对象 percent为进度值
-          content.onProgress({ percent: percent })
-        }
-      }
-      const formData = new FormData()
-      formData.append('file', content.file)
-      formData.append('type', 'SW1801')
-      formData.append('id', this.goodsId)
-
-      axios.post('http://www.allenyll.com:8080/system-web/file/upload', formData, config).then((res) => {
-        // 做处理
-        this.getFileList(this.goodsId)
-        if (res.data.code === '100000') {
-          self.uploadMessage = '上传成功！'
-        }
-      }).catch((error) => {
-        console.log(error)
-      })
     },
     download() {
       // download('group1/M00/00/00/rBsAA1yY_5iALGj7AAt46MDfrYg67.jpeg').then(response => {
