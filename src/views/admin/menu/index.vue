@@ -149,7 +149,7 @@ export default {
       ],
       listQuery: {
         like_menu_name: undefined,
-        order: 'sort_num'
+        order_sort_num: true
       },
       treeData: [],
       menuTreeData: [],

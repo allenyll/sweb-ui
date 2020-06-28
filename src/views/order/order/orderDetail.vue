@@ -20,11 +20,12 @@
           <el-button size="mini" @click="showMessageDialog">发送站内信</el-button>
           <el-button size="mini" @click="showCloseOrderDialog">关闭订单</el-button>
           <el-button size="mini" @click="showMarkOrderDialog">备注订单</el-button>
+          <el-button size="mini" @click="showCancelOrderDialog">取消订单</el-button>
         </div>
         <div v-show="order.orderStatus==='SW0702'" class="operate-button-container">
           <el-button size="mini" @click="showUpdateReceiverDialog">修改收货人信息</el-button>
           <el-button size="mini" @click="showMessageDialog">发送站内信</el-button>
-          <el-button size="mini">取消订单</el-button>
+          <el-button size="mini" @click="showCancelOrderDialog">取消订单</el-button>
           <el-button size="mini" @click="showMarkOrderDialog">备注订单</el-button>
         </div>
         <div v-show="order.orderStatus==='SW0703'||order.orderStatus==='SW0704'" class="operate-button-container">
@@ -350,11 +351,27 @@
         <el-button type="primary" @click="handleMarkOrder">确 定</el-button>
       </span>
     </el-dialog>
+    <el-dialog
+      :visible.sync="cancelOrderDialogVisible"
+      title="备注订单"
+      width="40%">
+      <el-form
+        :model="cancelInfo"
+        label-width="150px">
+        <el-form-item label="操作备注：">
+          <el-input v-model="cancelInfo.note" type="textarea" rows="3"/>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="cancelOrderDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="handleCancelOrder">确 定</el-button>
+      </span>
+    </el-dialog>
     <logistics-dialog v-model="logisticsDialogVisible"/>
   </div>
 </template>
 <script>
-import { getOrderDetail, updateReceiverInfo, updateMoneyInfo, closeOrder, updateOrderNote, deleteOrder } from '@/api/order/order/index'
+import { getOrderDetail, updateReceiverInfo, updateMoneyInfo, closeOrder, updateOrderNote, deleteOrder, cancelOrder } from '@/api/order/order/index'
 import LogisticsDialog from '@/views/order/order/components/logisticsDialog'
 import VDistpicker from 'v-distpicker'
 const defaultReceiverInfo = {
@@ -499,6 +516,8 @@ export default {
       closeInfo: { note: null, id: null },
       markOrderDialogVisible: false,
       markInfo: { note: null },
+      cancelInfo: { note: null },
+      cancelOrderDialogVisible: false,
       logisticsDialogVisible: false
     }
   },
@@ -638,6 +657,11 @@ export default {
       this.markInfo.id = this.id
       this.markInfo.note = null
     },
+    showCancelOrderDialog() {
+      this.cancelOrderDialogVisible = true
+      this.cancelInfo.id = this.id
+      this.cancelInfo.note = null
+    },
     handleMarkOrder() {
       this.$confirm('是否要备注订单?', '提示', {
         confirmButtonText: '确定',
@@ -653,6 +677,27 @@ export default {
           this.$message({
             type: 'success',
             message: '订单备注成功!'
+          })
+          getOrderDetail(this.id).then(response => {
+            this.order = response.data.order
+          })
+        })
+      })
+    },
+    handleCancelOrder() {
+      this.$confirm('是否要取消订单?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        const params = new URLSearchParams()
+        params.append('orderId', this.cancelInfo.id)
+        params.append('note', this.cancelInfo.note)
+        cancelOrder(params).then(response => {
+          this.cancelOrderDialogVisible = false
+          this.$message({
+            type: 'success',
+            message: '订单取消成功!'
           })
           getOrderDetail(this.id).then(response => {
             this.order = response.data.order

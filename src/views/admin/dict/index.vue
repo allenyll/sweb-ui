@@ -154,7 +154,7 @@ export default {
         like_name: '',
         eq_code: '',
         eq_parent_id: '0',
-        order: 'code'
+        order_code: true
       },
       dialogFormVisible: false,
       dialogStatus: '',

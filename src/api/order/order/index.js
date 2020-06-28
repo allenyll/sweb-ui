@@ -86,6 +86,14 @@ export function updateOrderNote(params) {
   })
 }
 
+export function cancelOrder(params) {
+  return request({
+    url: path + 'cancelOrder',
+    method: 'post',
+    params: params
+  })
+}
+
 export function putObj(id, obj) {
   return request({
     url: path + id,
