@@ -21,7 +21,8 @@ service.interceptors.request.use(
       const token = getToken()
       config.headers = {
         'Content-Type': 'application/json;charset=UTF-8',
-        'Authorization': token
+        'Authorization': token,
+        'login-type': 'sweb'
       }
       // config.headers['Authorization'] = token
     }

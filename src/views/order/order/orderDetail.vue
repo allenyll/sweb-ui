@@ -467,7 +467,7 @@ export default {
       }
     },
     formatPayStatus(value) {
-      if (value === 'SW0701') {
+      if (value === 'SW0701' || value === 'SW0707' || value === 'SW0708' || value === 'SW0709') {
         return '未支付'
       } else if (value === 'SW0710') {
         return '已退款'
@@ -476,7 +476,7 @@ export default {
       }
     },
     formatDeliverStatus(value) {
-      if (value === 'SW0701' || value === 'SW0702') {
+      if (value === 'SW0701' || value === 'SW0702' || value === 'SW0707' || value === 'SW0708' || value === 'SW0709') {
         return '未发货'
       } else {
         return '已发货'

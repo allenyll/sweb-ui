@@ -79,7 +79,8 @@ export default {
       const config = {
         header: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': token
+          'Authorization': token,
+          'login-type': 'sweb'
         },
         onUploadProgress: progressEvent => {
           const percent = (progressEvent.loaded / progressEvent.total * 100) | 0
