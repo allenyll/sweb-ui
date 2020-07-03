@@ -52,11 +52,6 @@ export default {
   },
   computed: {
     fileList() {
-      // const fileList = []
-      // for (let i = 0; i < this.value.length; i++) {
-      //   fileList.push({ url: this.value[i] })
-      // }
-      console.log(this.value)
       return this.value
     }
   },
@@ -102,7 +97,7 @@ export default {
       this.$message({
         type: 'info',
         message: '图片上传成功',
-        duration: 6000
+        duration: 3000
       })
       if (file.response.success) {
         this.editor.picture = file.response.message // 将返回的文件储存路径赋值picture字段
@@ -110,13 +105,11 @@ export default {
     },
     // 删除文件之前的钩子函数
     handleRemove(file, fileList) {
-      console.log(file)
-      console.log(fileList)
       this.$emit('removeFile', fileList)
       this.$message({
         type: 'info',
         message: '已删除原有图片',
-        duration: 6000
+        duration: 3000
       })
     },
     // 点击列表中已上传的文件事的钩子函数
@@ -129,7 +122,7 @@ export default {
       this.$message({
         type: 'info',
         message: '最多只能上传' + this.maxCount + '个图片',
-        duration: 6000
+        duration: 3000
       })
     },
     // 文件上传前的前的钩子函数
@@ -139,13 +132,21 @@ export default {
       const isGIF = file.type === 'image/gif'
       const isPNG = file.type === 'image/png'
       const isBMP = file.type === 'image/bmp'
-      const isLt2M = file.size / 1024 / 1024 < 2
+      const isLt2M = file.size / 1024 / 1024 < 5
 
       if (!isJPG && !isGIF && !isPNG && !isBMP) {
-        this.$message.error('上传图片必须是JPG/GIF/PNG/BMP 格式!')
+        this.$message({
+          type: 'error',
+          message: '上传图片必须是JPG/GIF/PNG/BMP 格式!',
+          duration: 3000
+        })
       }
       if (!isLt2M) {
-        this.$message.error('上传图片大小不能超过 2MB!')
+        this.$message({
+          type: 'error',
+          message: '上传图片大小不能超过5MB!',
+          duration: 3000
+        })
       }
       return (isJPG || isBMP || isGIF || isPNG) && isLt2M
     }

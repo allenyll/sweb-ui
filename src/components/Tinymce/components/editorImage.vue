@@ -45,7 +45,8 @@ export default {
       const config = {
         header: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': token + ',JWT_PLATFORM'
+          'Authorization': token,
+          'login-type': 'sweb'
         }
       }
       const formData = new FormData()
@@ -53,7 +54,7 @@ export default {
       formData.append('type', 'SW1803')
       formData.append('id', '0')
 
-      axios.post('http://localhost:8080/system-web/cosFile/upload', formData, config).then((res) => {
+      axios.post('http://localhost:10001/api-file/file/upload', formData, config).then((res) => {
         // 做处理
         if (res.data.code === '100000') {
           const uid = content.file.uid

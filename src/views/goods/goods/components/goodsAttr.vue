@@ -229,6 +229,7 @@ export default {
     handleFinishCommit() {
       // 设置属性图片到对应的属性
       this.setAttrPic()
+      this.setSkuPics()
       this.$emit('finishCommit', this.isEdit)
     },
     handleEdit(pid, id) {
@@ -438,6 +439,7 @@ export default {
       this.value.skuStockMapList = skuList
     },
     resetSkuSpecPic(specsList) {
+      // debugger
       this.selectSkuSpecAttrPics = []
       // const specsList = this.specsList
       if (specsList !== null && specsList !== undefined) {
@@ -451,7 +453,7 @@ export default {
                   let pic = ''
                   if (this.isEdit) {
                     // 编辑状态下获取图片
-                    pic = this.getProductSkuPic(this.specOptionNameMap[specOptionList[i]])
+                    pic = this.getProductSkuPic(this.specOptionNameMap[specOptionList[j]])
                     console.log(pic)
                   }
                   this.selectSkuSpecAttrPics.push({
@@ -519,6 +521,9 @@ export default {
         }
       }
       console.log(this.value.skuStockList)
+    },
+    setSkuPics() {
+      this.value.selectSkuPics = this.selectSkuPics
     }
   }
 }
