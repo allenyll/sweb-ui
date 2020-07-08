@@ -196,6 +196,9 @@ export default {
       this.getSpecsList(this.value.specsList, this.value.skuStockMapList)
       this.resetSkuSpecPic(this.value.specsList)
       return this.value.pkGoodsId
+    },
+    logOut: function(newValue) {
+      return this.$store.state.logOut
     }
   },
   watch: {
@@ -215,9 +218,13 @@ export default {
     }
   },
   created() {
-    this.categoryTreeList()
-    this.getSpecOptionList()
-    this.getFileList(this.value.pkGoodsId)
+    this.categoryTreeList((data) => {
+      if (!data) {
+        return
+      }
+      this.getSpecOptionList()
+      this.getFileList(this.value.pkGoodsId)
+    })
   },
   methods: {
     handlePrev() {
@@ -259,12 +266,14 @@ export default {
     removeFile(fileList) {
       this.selectSkuPics = fileList
       this.value.selectSkuPics = fileList
-      console.log(this.value.selectSkuPics)
     },
-    categoryTreeList() {
+    categoryTreeList(callback) {
       categoryTree().then(res => {
         const tree = this.getTreeOptions(res.data.categoryTree)
         this.categoryTree = tree
+        callback(true)
+      }).catch((reject) => {
+        callback(false)
       })
     },
     getSpecOptionList() {
@@ -290,7 +299,6 @@ export default {
       return data
     },
     getSpecsList(specsList, skuStockMapList) {
-      console.log('computed 赋值')
       this.specsList = specsList
       this.value.skuStockList = skuStockMapList
     },
@@ -316,7 +324,6 @@ export default {
               }
             }
             this.specsList = list
-            console.log(this.specsList)
           }
         })
       }
@@ -363,7 +370,6 @@ export default {
       this.value.skuStockList = []
       const skuList = this.value.skuStockList
       const specsList = this.specsList
-      console.log(specsList)
       // 只有一个规格
       if (specsList.length === 1) {
         const values = specsList[0].values
@@ -434,7 +440,6 @@ export default {
           }
         }
       }
-      console.log(skuList)
       this.value.skuStockList = skuList
       this.value.skuStockMapList = skuList
     },
@@ -446,7 +451,6 @@ export default {
         if (specsList.length >= 1) {
           for (let i = 0; i < specsList.length; i++) {
             if (specsList[i].specName === '颜色') {
-              console.log(specsList[i])
               const specOptionList = specsList[i].values
               if (specOptionList.length >= 1) {
                 for (let j = 0; j < specOptionList.length; j++) {
@@ -454,7 +458,6 @@ export default {
                   if (this.isEdit) {
                     // 编辑状态下获取图片
                     pic = this.getProductSkuPic(this.specOptionNameMap[specOptionList[j]])
-                    console.log(pic)
                   }
                   this.selectSkuSpecAttrPics.push({
                     name: this.specOptionNameMap[specOptionList[j]],
@@ -471,7 +474,6 @@ export default {
     getProductSkuPic(name) {
       for (let i = 0; i < this.value.skuStockList.length; i++) {
         if (this.value.skuStockList[i].value0 === name) {
-          console.log(this.value.skuStockList[i].picUrl)
           return this.value.skuStockList[i].picUrl
         }
       }
@@ -491,14 +493,11 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
-        console.log(this.value.skuStockList)
         if (this.value.skuStockList !== null && this.value.skuStockList.length > 0) {
           const price = this.value.skuStockList[0].skuPrice
-          console.log(price)
           for (let i = 1; i < this.value.skuStockList.length; i++) {
             this.value.skuStockList[i].skuPrice = price
           }
-          console.log(this.value.skuStockList)
         }
       })
     },
@@ -512,7 +511,6 @@ export default {
       })
     },
     setAttrPic() {
-      console.log(this.selectSkuSpecAttrPics)
       for (let i = 0; i < this.selectSkuSpecAttrPics.length; i++) {
         for (let j = 0; j < this.value.skuStockList.length; j++) {
           if (this.selectSkuSpecAttrPics[i].name === this.value.skuStockList[j].value0) {
@@ -520,7 +518,6 @@ export default {
           }
         }
       }
-      console.log(this.value.skuStockList)
     },
     setSkuPics() {
       this.value.selectSkuPics = this.selectSkuPics

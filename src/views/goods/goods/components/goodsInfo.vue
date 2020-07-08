@@ -313,9 +313,14 @@ export default {
     }
   },
   created() {
-    this.getBrandList()
-    this.categoryTreeList()
-    this.getUnitList()
+    this.getBrandList((data) => {
+      if (!data) {
+        // this.value.logOut = true
+        return
+      }
+      this.categoryTreeList()
+      this.getUnitList()
+    })
   },
   methods: {
     handleEdit(pid, id) {
@@ -327,16 +332,18 @@ export default {
           if (id !== '' && id !== null && id !== undefined) {
             this.selectCategory.push(id)
           }
-          console.log(this.selectCategory)
           if (this.selectCategory.length > 0) {
             this.flag = true
           }
         }
       }
     },
-    getBrandList() {
+    getBrandList(callback) {
       getBrandList().then(response => {
         this.brandOptions = response.data.list
+        callback(true)
+      }).catch((reject) => {
+        callback(false)
       })
     },
     categoryTreeList() {

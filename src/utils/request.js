@@ -75,7 +75,6 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log(error.response) // for debug
     if (error.response.status === 401) {
       MessageBox.confirm('登录超时', '确定登出', { // '你已被登出，可以取消继续留在该页面，或者重新登录'
         confirmButtonText: '重新登录',
