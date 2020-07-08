@@ -37,18 +37,10 @@ service.interceptors.request.use(
 
 // response 拦截器
 service.interceptors.response.use(
-  console.log(Error.toString),
-  // response => response,
-  /**
-   * 下面的注释为通过在response里，自定义code来标示请求状态
-   * 当code返回如下情况则说明权限有问题，登出并返回到登录页
-   * 如想通过 xmlhttprequest 来状态码标识 逻辑可写在下面error中
-   */
   response => {
-    const res = response.response.data
-    const header = response.response.headers
-    console.log(res)
-    console.log('HEADER' + header)
+    // debugger
+    const res = response
+    const header = response.headers
     if (res.status === 404) {
       store.dispatch('404').then(() => {
       })
@@ -57,8 +49,9 @@ service.interceptors.response.use(
       store.dispatch('401').then(() => {
       })
     }
-    const flag = true
-    if (flag) { // res.code !== 20000
+    if (res.status === 200) {
+      return response.data
+    } else {
       Message({
         message: res.message,
         type: 'error',
@@ -79,17 +72,21 @@ service.interceptors.response.use(
         })
       }
       return Promise.reject('error')
-    } else {
-      return response.data
     }
   },
   error => {
-    console.log('err' + error) // for debug
-    Message({
-      message: error.message,
-      type: 'error',
-      duration: 5 * 1000
-    })
+    console.log(error.response) // for debug
+    if (error.response.status === 401) {
+      MessageBox.confirm('登录超时', '确定登出', { // '你已被登出，可以取消继续留在该页面，或者重新登录'
+        confirmButtonText: '重新登录',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        store.dispatch('FedLogOut').then(() => {
+          location.reload() // 为了重新实例化vue-router对象 避免bug
+        })
+      })
+    }
     return Promise.reject(error)
   }
 )

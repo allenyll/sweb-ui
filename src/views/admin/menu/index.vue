@@ -196,20 +196,23 @@ export default {
     }
   },
   created() {
-    this.getList()
-    this.getMenuTreeList()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getMenuTreeList()
+    })
     this.menuManager_btn_add = this.elements['sys:menu:add']
     this.menuManager_btn_del = this.elements['sys:menu:delete']
     this.menuManager_btn_edit = this.elements['sys:menu:edit']
   },
   methods: {
-    getList() {
+    getList(callback) {
       requestTree(this.listQuery).then(data => {
         this.treeData = data.data.menus
-        // form 默认显示系统管理
-        // getObj(data.data.menus[0].id).then(response => {
-        // this.form = response.data.sysMenu;
-        // });
+        callback(true)
+      }).catch((reject) => {
+        callback(false)
       })
     },
     getMenuTreeList() {
@@ -290,7 +293,7 @@ export default {
         type: 'warning'
       }).then(() => {
         delObj(this.currentId).then(() => {
-          this.getList()
+          this.getList(data => {})
           this.getMenuTreeList()
           this.resetForm()
           this.onCancel()
@@ -307,7 +310,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           putObj(this.form.pkMenuId, this.form).then(() => {
-            this.getList()
+            this.getList(data => {})
             this.getMenuTreeList()
             this.$notify({
               title: '成功',
@@ -323,7 +326,7 @@ export default {
       this.$refs.form.validate(valid => {
         if (valid) {
           addObj(this.form).then(() => {
-            this.getList()
+            this.getList(data => {})
             this.getMenuTreeList()
             this.$notify({
               title: '成功',

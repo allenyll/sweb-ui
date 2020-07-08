@@ -260,21 +260,28 @@ export default {
     }
   },
   created() {
-    this.getList()
-    this.getDepotTreeList()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getDepotTreeList()
+    })
     this.userManager_btn_edit = this.elements['sys:user:edit']
     this.userManager_btn_del = this.elements['sys:user:delete']
     this.userManager_btn_add = this.elements['sys:user:add']
     this.userManager_btn_config_role = this.elements['sys:user:configRole']
   },
   methods: {
-    getList() {
+    getList(callback) {
       this.listLoading = true
       page(this.listQuery)
         .then(response => {
           this.list = response.data.list
           this.total = response.data.total
           this.listLoading = false
+          callback(true)
+        }).catch((reject) => {
+          callback(false)
         })
     },
     getDepotTreeList() {
@@ -377,15 +384,15 @@ export default {
 
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCreate() {
       this.resetTemp()
@@ -415,7 +422,7 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              this.getList()
+              this.getList(data => {})
             })
         })
     },
@@ -426,7 +433,7 @@ export default {
           addObj(this.form)
             .then(() => {
               this.dialogFormVisible = false
-              this.getList()
+              this.getList(data => {})
               this.$notify({
                 title: '成功',
                 message: '创建成功',
@@ -451,7 +458,7 @@ export default {
           this.form.password = undefined
           putObj(this.form.pkUserId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '更新成功',

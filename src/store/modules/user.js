@@ -58,8 +58,8 @@ const user = {
       const username = userInfo.username.trim()
       return new Promise((resolve, reject) => {
         loginByUsername(username, userInfo.password).then(response => {
-          const data = response.data
-          var token = 'Bearer ' + data.token
+          const _token = response.token
+          var token = 'Bearer ' + _token
           const tokens = token
           commit('SET_TOKEN', tokens)
           setToken(tokens)
@@ -74,8 +74,8 @@ const user = {
     GetUserInfo({ commit, state }) {
       return new Promise((resolve, reject) => {
         getUserInfo(state.token).then(response => {
-          if (!response.data) { // 由于mockjs 不支持自定义状态码只能这样hack
-            reject('error')
+          if (response.code !== '100000') { // 由于mockjs 不支持自定义状态码只能这样hack
+            reject('用户信息获取失败')
           }
           const data = response.data
 
@@ -90,7 +90,7 @@ const user = {
             }
             commit('SET_ELEMENTS', elements)
           } else {
-            reject('getInfo: menus must be a non-null array !')
+            reject('初始化菜单失败，菜单数组不能为空！!')
           }
 
           commit('SET_NAME', data.name)

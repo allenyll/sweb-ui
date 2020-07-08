@@ -492,20 +492,27 @@ export default {
     }
   },
   created() {
-    this.getList()
-    this.categoryTreeList()
-    this.getCustomerList()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.categoryTreeList()
+      this.getCustomerList()
+    })
     this.couponManager_btn_edit = this.elements['market:coupon:edit']
     this.couponManager_btn_del = this.elements['market:coupon:delete']
     this.couponManager_btn_add = this.elements['market:coupon:add']
   },
   methods: {
-    getList() {
+    getList(callback) {
       this.listLoading = true
       page(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
+        callback(true)
+      }).catch((reject) => {
+        callback(false)
       })
     },
     getCustomerList() {
@@ -634,18 +641,18 @@ export default {
       this.$router.push({ path: '/market/couponDetail', query: { id: row.pkCouponId }})
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleDialogFilter() {
       this.getCustomerList()
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(data => {})
     },
     handleDialogSizeChange(val) {
       this.dialogListQuery.limit = val
@@ -692,7 +699,7 @@ export default {
         if (valid) {
           addObj(this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '创建成功',
@@ -718,7 +725,7 @@ export default {
           this.form.password = undefined
           putObj(this.form.pkCouponId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '创建成功',

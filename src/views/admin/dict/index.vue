@@ -176,20 +176,27 @@ export default {
   watch: {
   },
   created() {
-    this.getList()
-    this.getParentDict()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getParentDict()
+    })
     this.dictManager_btn_edit = this.elements['sys:dict:edit']
     this.dictManager_btn_del = this.elements['sys:dict:delete']
     this.dictManager_btn_add = this.elements['sys:dict:add']
   },
   methods: {
-    getList() {
+    getList(callback) {
       this.listLoading = true
       page(this.listQuery)
         .then(response => {
           this.list = response.data.list
           this.total = response.data.total
           this.listLoading = false
+          callback(true)
+        }).catch((reject) => {
+          callback(false)
         })
     },
     getParentDict() {
@@ -206,15 +213,15 @@ export default {
         })
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCreate() {
       this.resetTemp()
@@ -244,7 +251,7 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              this.getList()
+              this.getList(data => {})
             })
         })
     },
@@ -255,7 +262,7 @@ export default {
           addObj(this.form)
             .then(() => {
               this.dialogFormVisible = false
-              this.getList()
+              this.getList(data => {})
               this.getParentDict()
               this.resetTemp()
               this.$notify({
@@ -281,7 +288,7 @@ export default {
           this.dialogFormVisible = false
           putObj(this.form.pkDictId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '更新成功',

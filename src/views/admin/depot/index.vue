@@ -150,16 +150,23 @@ export default {
     }
   },
   created() {
-    this.getList()
-    this.getDepotTreeList()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getDepotTreeList()
+    })
     this.depot_btn_add = this.elements['sys:depot:add']
     this.depot_btn_edit = this.elements['sys:depot:edit']
     this.depot_btn_del = this.elements['sys:depot:delete']
   },
   methods: {
-    getList() {
+    getList(callback) {
       requestTree(this.listQuery).then(data => {
         this.treeData = data.data.depots
+        callback(true)
+      }).catch((reject) => {
+        callback(false)
       })
     },
     getDepotTreeList() {
@@ -202,7 +209,7 @@ export default {
       this.dialogDepotVisible = false
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleCreate() {
       this.resetTemp()
@@ -210,7 +217,6 @@ export default {
       this.dialogFormVisible = true
     },
     handleUpdate(row) {
-      console.log(row)
       getObj(row.id)
         .then(response => {
           this.form = response.data.obj
@@ -242,7 +248,7 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              this.getList()
+              this.getList(data => {})
               this.getDepotTreeList()
             })
         })
@@ -254,7 +260,7 @@ export default {
           addObj(this.form)
             .then(() => {
               this.dialogFormVisible = false
-              this.getList()
+              this.getList(data => {})
               this.getDepotTreeList()
               this.$notify({
                 title: '成功',
@@ -279,7 +285,7 @@ export default {
           this.dialogFormVisible = false
           putObj(this.form.pkDepotId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.getDepotTreeList()
             this.$notify({
               title: '成功',

@@ -128,14 +128,18 @@ export default {
     ])
   },
   created() {
-    this.getList()
-    this.getSpecsList()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getSpecsList()
+    })
     this.specOptionManager_btn_edit = this.elements['goods:specOption:edit']
     this.specOptionManager_btn_del = this.elements['goods:specOption:delete']
     this.specOptionManager_btn_add = this.elements['goods:specOption:add']
   },
   methods: {
-    getList() {
+    getList(callback) {
       this.listLoading = true
       var _id = this.$route.query.id
       // eslint-disable-next-line eqeqeq
@@ -146,18 +150,21 @@ export default {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
+        callback(true)
+      }).catch((reject) => {
+        callback(false)
       })
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCreate() {
       this.resetTemp()
@@ -196,7 +203,7 @@ export default {
         if (valid) {
           addObj(this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '创建成功',
@@ -222,7 +229,7 @@ export default {
           this.form.password = undefined
           putObj(this.form.pkSpecOptionId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '创建成功',

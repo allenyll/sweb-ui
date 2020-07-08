@@ -255,19 +255,26 @@ export default {
     }
   },
   created() {
-    this.getList()
-    this.getCategoryTree()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getCategoryTree()
+    })
     this.categoryManager_btn_edit = this.elements['goods:category:edit']
     this.categoryManager_btn_del = this.elements['goods:category:delete']
     this.categoryManager_btn_add = this.elements['goods:category:add']
   },
   methods: {
-    getList() {
+    getList(callback) {
       this.listLoading = true
       tree(this.listQuery)
         .then(response => {
           this.treeData = response.data.list
           this.listLoading = false
+          callback(true)
+        }).catch((reject) => {
+          callback(false)
         })
     },
     getCategoryTree() {
@@ -313,15 +320,15 @@ export default {
       this.fileList = fileList
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCreate() {
       this.resetTemp()
@@ -369,7 +376,7 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              this.getList()
+              this.getList(data => {})
               this.getCategoryTree()
             })
         })
@@ -383,7 +390,7 @@ export default {
           addObj(this.form)
             .then(() => {
               this.dialogFormVisible = false
-              this.getList()
+              this.getList(data => {})
               this.getCategoryTree()
               this.$notify({
                 title: '成功',
@@ -412,7 +419,7 @@ export default {
           this.form.fileList = this.fileList
           putObj(this.form.pkCategoryId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.getCategoryTree()
             this.$notify({
               title: '成功',

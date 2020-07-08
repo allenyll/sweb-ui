@@ -73,10 +73,9 @@
             highlight-current
             show-checkbox
             check-strictly>
-
             <span slot-scope="{ node, data }" class="custom-tree-node">
-              <span >
-                <i><svg-icon :icon-class="node.icon"/></i>&nbsp;{{ node.label }}
+              <span>
+                <i><svg-icon :icon-class="data.icon"/></i>&nbsp;{{ node.label }}
               </span>
             </span>
           </el-tree>
@@ -156,21 +155,28 @@ export default {
 
   },
   created() {
-    this.getList()
-    this.getMenuTreeList()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getMenuTreeList()
+    })
     this.role_btn_edit = this.elements['sys:role:edit']
     this.role_btn_del = this.elements['sys:role:delete']
     this.role_btn_add = this.elements['sys:role:add']
     this.role_btn_config_menu = this.elements['sys:role:configMenu']
   },
   methods: {
-    getList() {
+    getList(callback) {
       this.listLoading = true
       page(this.listQuery)
         .then(response => {
           this.list = response.data.list
           this.total = response.data.total
           this.listLoading = false
+          callback(true)
+        }).catch((reject) => {
+          callback(false)
         })
     },
     getMenuTreeList() {
@@ -205,15 +211,15 @@ export default {
       this.dialogMenuVisible = false
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(data => {})
     },
     handleConfig(row) {
       this.configRoleId = row.pkRoleId
@@ -250,7 +256,7 @@ export default {
                 type: 'success',
                 duration: 2000
               })
-              this.getList()
+              this.getList(data => {})
             })
         })
     },
@@ -261,7 +267,7 @@ export default {
           addObj(this.form)
             .then(() => {
               this.dialogFormVisible = false
-              this.getList()
+              this.getList(data => {})
               this.$notify({
                 title: '成功',
                 message: '创建成功',
@@ -286,7 +292,7 @@ export default {
           // this.$refs.menuTreeDialog.setCheckedKeys([])
           putObj(this.form.pkRoleId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '更新成功',

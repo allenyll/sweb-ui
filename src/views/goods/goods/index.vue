@@ -521,11 +521,15 @@ export default {
     }
   },
   created() {
-    this.getList()
-    this.getBrandList()
-    this.getCategoryList()
-    this.getUnitList()
-    this.download()
+    this.getList(data => {
+      if (!data) {
+        return
+      }
+      this.getBrandList()
+      this.getCategoryList()
+      this.getUnitList()
+      this.download()
+    })
     this.goodsManager_btn_edit = this.elements['goods:goods:edit']
     this.goodsManager_btn_del = this.elements['goods:goods:delete']
     this.goodsManager_btn_add = this.elements['goods:goods:add']
@@ -536,7 +540,7 @@ export default {
     },
     handleSearchList() {
       this.listQuery.page = 1
-      this.getList()
+      this.getList(data => {})
     },
     closeDialog() {
       this.fileList = []
@@ -590,13 +594,16 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    getList() {
+    getList(callback) {
       this.listLoading = true
       page(this.listQuery)
         .then(response => {
           this.list = response.data.list
           this.total = response.data.total
           this.listLoading = false
+          callback(true)
+        }).catch((reject) => {
+          callback(false)
         })
     },
     getBrandList() {
@@ -618,15 +625,15 @@ export default {
       })
     },
     handleFilter() {
-      this.getList()
+      this.getList(data => {})
     },
     handleSizeChange(val) {
       this.listQuery.limit = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCurrentChange(val) {
       this.listQuery.page = val
-      this.getList()
+      this.getList(data => {})
     },
     handleCreate() {
       this.resetTemp()
@@ -673,7 +680,7 @@ export default {
           addObj(this.form)
             .then(() => {
               this.dialogFormVisible = false
-              this.getList()
+              this.getList(data => {})
               this.$notify({
                 title: '成功',
                 message: '创建成功',
@@ -699,7 +706,7 @@ export default {
           this.dialogFormVisible = false
           putObj(this.form.pkGoodsId, this.form).then(() => {
             this.dialogFormVisible = false
-            this.getList()
+            this.getList(data => {})
             this.$notify({
               title: '成功',
               message: '更新成功',
