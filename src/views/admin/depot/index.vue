@@ -25,7 +25,7 @@
         <el-form-item label="编码" prop="depotCode">
           <el-input v-model="form.depotCode" placeholder="请输入编码"/>
         </el-form-item>
-        <el-form-item label="上级部门" placeholder="请选择部门" prop="parentDepotName">
+        <el-form-item :disabled="true" label="上级部门" placeholder="请选择部门" prop="parentDepotName">
           <el-input v-model="form.parentDepotName" style="width:80%; float:left;"/>
           <el-button style="margin-left:10px;" type="primary" icon="el-icon-menu" @click="dialogDepotVisible = true">组织树</el-button>
         </el-form-item>
@@ -42,11 +42,11 @@
         <el-button v-else type="primary" @click="update('form')">确 定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="dialogDepotVisible" title="组织" width="20%">
+    <el-dialog :visible.sync="dialogDepotVisible" title="组织" width="20%" @close="closeDepotTree">
       <el-row style="margin:0 auto;">
         <el-col :span="15" style="margin-left:30px;">
           <el-input v-model="filterDepotText" placeholder="输入关键字过滤" style="margin-bottom:15px;"/>
-          <el-tree ref="depotTree" :data="depotTreeData" :props="defaultProps" :filter-node-method="filterNode" class="filter-tree" node-key="id" highlight-current show-checkbox default-expand-all check-strictly/>
+          <el-tree ref="depotTree" :data="depotTreeData" :props="defaultProps" :filter-node-method="filterNode" :default-checked-keys="checkDepot" class="filter-tree" node-key="id" highlight-current show-checkbox default-expand-all check-strictly/>
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
@@ -63,7 +63,7 @@
   Created: 2018/1/19-14:54
 */
 import treeTable from '@/components/TreeTable'
-import { page, addObj, getObj, delObj, putObj, requestTree, getDepotTree } from '@/api/admin/depot/index'
+import { addObj, getObj, delObj, putObj, requestTree, getDepotTree } from '@/api/admin/depot/index'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Depot',
@@ -136,7 +136,8 @@ export default {
         label: 'label'
       },
       filterDepotText: '',
-      depotTreeData: []
+      depotTreeData: [],
+      checkDepot: []
     }
   },
   computed: {
@@ -180,6 +181,8 @@ export default {
     },
     cancleDepot() {
       this.filterDepotText = ''
+      this.checkDepot = []
+      this.$refs.depotTree.setCheckedKeys([])
       this.dialogDepotVisible = false
     },
     configDepot() {
@@ -206,7 +209,15 @@ export default {
       getObj(keyArr[0]).then(response => {
         this.form.parentDepotName = response.data.obj.depotName
       })
+      this.filterDepotText = ''
+      this.checkDepot = []
+      this.$refs.depotTree.setCheckedKeys([])
       this.dialogDepotVisible = false
+    },
+    closeDepotTree() {
+      this.filterDepotText = ''
+      this.checkDepot = []
+      this.$refs.depotTree.setCheckedKeys([])
     },
     handleFilter() {
       this.getList(data => {})
@@ -220,6 +231,7 @@ export default {
       getObj(row.id)
         .then(response => {
           this.form = response.data.obj
+          this.checkDepot = [response.data.obj.parentDepotId]
           this.dialogFormVisible = true
           this.dialogStatus = 'update'
         })

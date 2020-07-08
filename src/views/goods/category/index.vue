@@ -83,11 +83,11 @@
       </div>
     </el-dialog>
 
-    <el-dialog :visible.sync="dialogCategoryVisible" title="商品分类" width="24%">
+    <el-dialog :visible.sync="dialogCategoryVisible" title="商品分类" width="24%" @close="closeCategoryTree">
       <el-row style="margin:0 auto;">
         <el-col :span="15" style="margin-left:30px;">
           <el-input v-model="filterCategoryText" placeholder="输入关键字过滤" style="margin-bottom:15px;"/>
-          <el-tree ref="categoryTree" :data="categoryTreeData" :props="defaultProps" :filter-node-method="filterNode" class="filter-tree" node-key="id" highlight-current show-checkbox default-expand-all check-strictly/>
+          <el-tree ref="categoryTree" :data="categoryTreeData" :props="defaultProps" :filter-node-method="filterNode" :default-checked-keys="checkedCategory" class="filter-tree" node-key="id" highlight-current show-checkbox default-expand-all check-strictly/>
         </el-col>
       </el-row>
       <span slot="footer" class="dialog-footer">
@@ -243,7 +243,8 @@ export default {
       // 图片列表（用于在上传组件中回显图片）
       fileList: [],
       fileUrl: '',
-      maxCount: 1
+      maxCount: 1,
+      checkedCategory: []
     }
   },
   computed: {
@@ -286,8 +287,15 @@ export default {
       if (!value) return true
       return data.label.indexOf(value) !== -1
     },
+    closeCategoryTree() {
+      this.filterCategoryText = ''
+      this.checkedCategory = []
+      this.$refs.categoryTree.setCheckedKeys([])
+    },
     cancleCategory() {
       this.filterCategoryText = ''
+      this.checkedCategory = []
+      this.$refs.categoryTree.setCheckedKeys([])
       this.dialogCategoryVisible = false
     },
     configCategory() {
@@ -314,6 +322,9 @@ export default {
       getObj(keyArr[0]).then(response => {
         this.form.parentCategoryName = response.data.obj.categoryName
       })
+      this.filterCategoryText = ''
+      this.checkedCategory = []
+      this.$refs.categoryTree.setCheckedKeys([])
       this.dialogCategoryVisible = false
     },
     removeFile(fileList) {
@@ -347,6 +358,7 @@ export default {
             }
             this.fileList.push(data)
           }
+          this.checkedCategory = [response.data.obj.parentId]
           this.form = response.data.obj
           this.dialogFormVisible = true
           this.dialogStatus = 'update'

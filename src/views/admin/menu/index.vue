@@ -82,7 +82,7 @@
         </el-card>
       </el-col>
     </el-row>
-    <el-dialog :visible.sync="dialogTableVisible" title="菜单树" width="25%">
+    <el-dialog :visible.sync="dialogTableVisible" title="菜单树" width="25%" @close="closeMenuTree">
       <el-row style="margin:0 auto;">
         <el-col :span="15" style="margin-left:30px;">
           <el-input v-model="filterMenuText" placeholder="输入关键字过滤" style="margin-bottom:15px;"/>
@@ -91,6 +91,7 @@
             :data="menuTreeData"
             :props="defaultProps"
             :filter-node-method="filterNode"
+            :default-checked-keys="checkedMenu"
             class="filter-tree"
             node-key="id"
             highlight-current
@@ -158,6 +159,7 @@ export default {
         label: 'label'
       },
       labelPosition: 'right',
+      checkedMenu: [],
       form: {
         menuCode: undefined,
         menuName: undefined,
@@ -218,11 +220,12 @@ export default {
     getMenuTreeList() {
       getMenuTree('menu').then(data => {
         this.menuTreeData = data.data.menuTree
-        console.log(this.menuTreeData)
       })
     },
     cancleMenu() {
       this.filterMenuText = ''
+      this.checkedMenu = []
+      this.$refs.menuTreeDialog.setCheckedKeys([])
       this.dialogTableVisible = false
     },
     configMenu() {
@@ -249,7 +252,15 @@ export default {
       getObj(keyArr[0]).then(response => {
         this.form.parentMenuName = response.data.obj.menuName
       })
+      this.filterMenuText = ''
+      this.checkedMenu = []
+      this.$refs.menuTreeDialog.setCheckedKeys([])
       this.dialogTableVisible = false
+    },
+    closeMenuTree() {
+      this.filterMenuText = ''
+      this.checkedMenu = []
+      this.$refs.menuTreeDialog.setCheckedKeys([])
     },
     openIcon(index) {
       this.iconModel = true
@@ -273,6 +284,7 @@ export default {
         this.form = response.data.obj
       })
       this.currentId = data.id
+      this.checkedMenu = [data.parentId]
       this.showElement = true
     },
     handlerEdit() {
