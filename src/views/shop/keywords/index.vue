@@ -16,34 +16,24 @@
           <span>{{ scope.row.keyword }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="热销">
+      <el-table-column align="center" label="是否热门">
         <template slot-scope="scope">
-          <span>{{ scope.row.isHot }}</span>
+          <span>{{ scope.row.isHot | isFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="默认">
+      <el-table-column align="center" label="是否默认">
         <template slot-scope="scope">
-          <span>{{ scope.row.isDefault }}</span>
+          <span>{{ scope.row.isDefault | isFilter }}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="显示">
+      <el-table-column align="center" label="是否显示">
         <template slot-scope="scope">
-          <span>{{ scope.row.isShow }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="排序">
-        <template slot-scope="scope">
-          <span>{{ scope.row.sortOrder }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column align="center" label="关键词的跳转链接">
-        <template slot-scope="scope">
-          <span>{{ scope.row.schemeUrl }}</span>
+          <span>{{ scope.row.isShow | isFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="类型">
         <template slot-scope="scope">
-          <span>{{ scope.row.type }}</span>
+          <span>{{ scope.row.type | typeFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column fixed="right" align="center" label="操作">
@@ -60,27 +50,57 @@
     </div>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="form" :model="form" :rules="rules" label-width="100px">
-        <el-form-item label="关键字" prop="keyword">
-          <el-input v-model="form.keyword" placeholder="请输入关键字"/>
-        </el-form-item>
-        <el-form-item label="热销" prop="isHot">
-          <el-input v-model="form.isHot" placeholder="请输入热销"/>
-        </el-form-item>
-        <el-form-item label="默认" prop="isDefault">
-          <el-input v-model="form.isDefault" placeholder="请输入默认"/>
-        </el-form-item>
-        <el-form-item label="显示" prop="isShow">
-          <el-input v-model="form.isShow" placeholder="请输入显示"/>
-        </el-form-item>
-        <el-form-item label="排序" prop="sortOrder">
-          <el-input v-model="form.sortOrder" placeholder="请输入排序"/>
-        </el-form-item>
-        <el-form-item label="关键词的跳转链接" prop="schemeUrl">
-          <el-input v-model="form.schemeUrl" placeholder="请输入关键词的跳转链接"/>
-        </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-input v-model="form.type" placeholder="请输入类型"/>
-        </el-form-item>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="关键字" prop="keyword">
+              <el-input v-model="form.keyword" placeholder="请输入关键字"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="关键词的跳转链接" prop="schemeUrl">
+              <el-input v-model="form.schemeUrl" placeholder="请输入关键词的跳转链接"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="24">
+            <el-form-item label="类型" prop="type">
+              <el-radio v-model="form.type" label="SW2801">热门</el-radio>
+              <el-radio v-model="form.type" label="SW2802">核心</el-radio>
+              <el-radio v-model="form.type" label="SW2803">区域</el-radio>
+              <el-radio v-model="form.type" label="SW2804">长尾</el-radio>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否默认" prop="isDefault">
+              <el-radio v-model="form.isDefault" label="SW1001">是</el-radio>
+              <el-radio v-model="form.isDefault" label="SW1002">否</el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="是否热门" prop="isHot">
+              <el-radio v-model="form.isHot" label="SW1001">是</el-radio>
+              <el-radio v-model="form.isHot" label="SW1002">否</el-radio>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12">
+            <el-form-item label="是否显示" prop="isShow">
+              <el-radio v-model="form.isShow" label="SW1001">是</el-radio>
+              <el-radio v-model="form.isShow" label="SW1002">否</el-radio>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="排序" prop="sortOrder">
+              <el-input v-model="form.sortOrder" placeholder="请输入排序"/>
+            </el-form-item>
+          </el-col>
+        </el-row>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="cancel('form')">取 消</el-button>
@@ -96,16 +116,34 @@ import { page, addObj, getObj, delObj, putObj } from '@/api/shop/keywords/index'
 import { mapGetters } from 'vuex'
 export default {
   name: 'Keywords',
+  filters: {
+    isFilter: function(val) {
+      const map = {
+        'SW1001': '是',
+        'SW1002': '否'
+      }
+      return map[val]
+    },
+    typeFilter: function(val) {
+      const map = {
+        'SW2801': '热门',
+        'SW2802': '核心',
+        'SW2803': '区域',
+        'SW2804': '长尾'
+      }
+      return map[val]
+    }
+  },
   data() {
     return {
       form: {
         keyword: undefined,
-        isHot: undefined,
-        isDefault: undefined,
-        isShow: undefined,
+        isHot: 'SW1001',
+        isDefault: 'SW1002',
+        isShow: 'SW1001',
         sortOrder: undefined,
         schemeUrl: undefined,
-        type: undefined
+        type: 'SW2801'
       },
       rules: {
         keyword: [
@@ -136,12 +174,6 @@ export default {
           {
             required: true,
             message: '请输入排序',
-            trigger: 'blur'
-          }
-        ], schemeUrl: [
-          {
-            required: true,
-            message: '请输入关键词的跳转链接',
             trigger: 'blur'
           }
         ], type: [
@@ -179,9 +211,9 @@ export default {
   },
   created() {
     this.getList()
-    this.keywordsManager_btn_edit = this.elements['shop:keywords:edit']
-    this.keywordsManager_btn_del = this.elements['shop:keywords:delete']
-    this.keywordsManager_btn_add = this.elements['shop:keywords:add']
+    this.keywordsManager_btn_edit = this.elements['shop:keyword:edit']
+    this.keywordsManager_btn_del = this.elements['shop:keyword:delete']
+    this.keywordsManager_btn_add = this.elements['shop:keyword:add']
   },
   methods: {
     getList() {
@@ -282,12 +314,12 @@ export default {
     resetTemp() {
       this.form = {
         keyword: undefined,
-        isHot: undefined,
-        isDefault: undefined,
-        isShow: undefined,
+        isHot: 'SW1001',
+        isDefault: 'SW1002',
+        isShow: 'SW1001',
         sortOrder: undefined,
         schemeUrl: undefined,
-        type: undefined
+        type: 'SW2801'
       }
     }
   }

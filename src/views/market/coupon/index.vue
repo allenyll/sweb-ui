@@ -537,7 +537,7 @@ export default {
         type: 'warning'
       }).then(() => {
         publishCoupon(this.tempCouponId, row.pkCustomerId).then(res => {
-          if (res.data.code === '100000') {
+          if (res.code === '100000') {
             this.$message({
               message: '发放成功',
               type: 'success'

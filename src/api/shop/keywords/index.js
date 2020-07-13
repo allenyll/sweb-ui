@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-const path = '/system-web/keywords/'
+const path = '/api-cms/keywords/'
 
 export function list() {
   return request({

@@ -542,9 +542,12 @@ export default {
       } else if (value === 'SW0703') {
         // 已发货
         return 3
+      } else if (value === 'SW0704') {
+        // 已发货
+        return 4
       } else if (value === 'SW0706') {
         // 已完成
-        return 4
+        return 5
       } else {
         // 待付款、已关闭、无效订单
         return 1

@@ -358,5 +358,26 @@ export const asyncRouterMap = [
         meta: { title: '消息管理', icon: 'sw-message', noCache: true, perms: 'market:message:list' }
       }
     ]
+  },
+  {
+    path: '/shop',
+    component: Layout,
+    name: '商城管理',
+    meta: { title: '商城管理', icon: 'sw-store', perms: 'shop:shop' },
+    icon: 'setting',
+    children: [
+      {
+        path: 'keywords',
+        component: () => import('@/views/shop/keywords/index'),
+        name: '关键字管理',
+        meta: { title: '关键字管理', icon: 'sw-word', noCache: true, perms: 'shop:keyword:list' }
+      },
+      {
+        path: 'searchHistory',
+        name: '搜索历史',
+        component: () => import('@/views/shop/searchHistory/index'),
+        meta: { title: '搜索历史', icon: 'sw-check', noCache: true, perms: 'shop:searchHistory:list' }
+      }
+    ]
   }
 ]
